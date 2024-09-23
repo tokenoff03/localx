@@ -1,6 +1,10 @@
 package repository
 
-import "github.com/jmoiron/sqlx"
+import (
+	"localx"
+
+	"github.com/jmoiron/sqlx"
+)
 
 type Tour interface {
 	CreateTour(tour localx.Tour, companyId int) (int, error)
@@ -12,5 +16,5 @@ type Repository struct {
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
-	return &Repository{Tour: }
+	return &Repository{Tour: NewTourPostgres(db)}
 }

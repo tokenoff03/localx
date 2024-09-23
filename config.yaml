@@ -1,0 +1,2 @@
+db:
+  conString: 'postgresql://admin:jr7NlVbP0EL2jbPK8GSTEVHKdOojBQn3@dpg-cromq42j1k6c739ki1ug-a.frankfurt-postgres.render.com/postgre_akgz'
