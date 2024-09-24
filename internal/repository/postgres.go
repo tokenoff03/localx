@@ -4,12 +4,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Config struct {
-	conString string
-}
-
-func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
-	db, err := sqlx.Open("postgres", cfg.conString)
+func NewPostgresDB(urlPath string) (*sqlx.DB, error) {
+	db, err := sqlx.Open("postgres", urlPath)
 
 	if err != nil {
 		return nil, err

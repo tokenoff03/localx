@@ -1,4 +1,4 @@
-package localx
+package models
 
 import "time"
 

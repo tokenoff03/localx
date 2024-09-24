@@ -1,4 +1,4 @@
-package localx
+package models
 
 type SuperUser struct {
 	ID       int    `json:"id"`
