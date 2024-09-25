@@ -96,7 +96,8 @@ ALTER TABLE
     "tour_review" ADD PRIMARY KEY("id");
 CREATE TABLE "traveler"(
     "id" BIGINT NOT NULL,
-    "full_name" VARCHAR(255) NOT NULL,
+    "first_name" VARCHAR(255) NOT NULL,
+    "last_name" VARCHAR(255) NOT NULL,
     "email" VARCHAR(255) NOT NULL,
     "phone_number" VARCHAR(255) NOT NULL,
     "instagram" VARCHAR(255) NULL,
@@ -108,6 +109,7 @@ CREATE TABLE "traveler"(
     "interest" BIGINT NOT NULL,
     "favorite_tours" BIGINT NOT NULL
 );
+
 ALTER TABLE
     "traveler" ADD PRIMARY KEY("id");
 ALTER TABLE
