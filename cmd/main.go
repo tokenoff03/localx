@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"localx"
+	"localx/internal/config"
 	"localx/internal/handler"
 	"localx/internal/repository"
 	"localx/internal/services"
@@ -12,17 +13,18 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	logrus.SetFormatter(new(logrus.JSONFormatter))
-
-	if err := initConfig(); err != nil {
-		logrus.Fatalf("error initializing configs: %s", err.Error())
+	cfg, err := config.InitConfig("../config.yml")
+	if err != nil {
+		panic(err)
 	}
 
-	db, err := repository.NewPostgresDB(viper.GetString("db.url"))
+	logrus.SetFormatter(new(logrus.JSONFormatter))
+	logrus.Print(cfg.DB.URI)
+
+	db, err := repository.NewPostgresDB(cfg.DB.URI)
 	if err != nil {
 		logrus.Fatalf("failed to initialize db: %s", err.Error())
 	}
@@ -33,7 +35,7 @@ func main() {
 
 	server := new(localx.Server)
 	go func() {
-		if err := server.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
+		if err := server.Run(cfg.Server.Port, handler.InitRoutes()); err != nil {
 			logrus.Fatalf("Error to initializing http server: %s", err.Error())
 		}
 	}()
@@ -52,10 +54,4 @@ func main() {
 	if err := db.Close(); err != nil {
 		logrus.Errorf("Error occured on db connection close: %s", err.Error())
 	}
-}
-
-func initConfig() error {
-	viper.AddConfigPath("../internal/configs")
-	viper.SetConfigName("config")
-	return viper.ReadInConfig()
 }
