@@ -28,12 +28,12 @@ func (t *AuthTraveler) GetAllTraveler() ([]models.Traveler, error) {
 
 	return travelers, nil
 }
-func (t *AuthTraveler) GetTraveler(phoneNumber string) (models.Traveler, error) {
+func (t *AuthTraveler) GetTraveler(email string) (models.Traveler, error) {
 	var traveler models.Traveler
 
-	query := fmt.Sprintf("SELECT t.id, t.first_name, t.last_name, t.email, t.phone_number, t.instagram, t.date_of_birth, t.city, t.country, t.description, t.interest, t.favorite_tours FROM %s t WHERE t.phone_number=$1", "traveler")
+	query := fmt.Sprintf("SELECT t.id, t.first_name, t.last_name, t.email, t.phone_number, t.instagram, t.date_of_birth, t.city, t.country, t.description, t.interest, t.favorite_tours FROM %s t WHERE t.email=$1", "traveler")
 
-	err := t.db.Get(&traveler, query, phoneNumber)
+	err := t.db.Get(&traveler, query, email)
 
 	if errors.Is(err, sql.ErrNoRows) {
 

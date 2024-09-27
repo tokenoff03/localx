@@ -4,43 +4,60 @@ import (
 	"errors"
 	"localx/internal/models"
 	"localx/internal/repository"
+	"sync"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
 const (
-	salt       = "asdasdqw16531865zxcq1"
-	tokenTTL   = 15 * time.Minute
-	signingKey = "213easdxz1c856eq"
+	tokenTTL        = 15 * time.Minute //15 minutes
+	signingKey      = "213easdxz1c856eq"
+	refreshTokenTTL = 7 * 24 * time.Hour //7 days
 )
 
-type OTPStorage struct {
-	code string
+type otpData struct {
+	code      string
+	expiresAt time.Time
+}
+
+type InMemoryTokenStorage struct {
+	accessTokens  map[string]string // access token по phoneNumber
+	refreshTokens map[string]string // refresh token по phoneNumber
 }
 
 type AuthTravelerService struct {
-	repo *repository.Repository
+	repo     *repository.Repository
+	otpStore map[string]otpData
+	tokens   *InMemoryTokenStorage
+	mu       sync.Mutex
 }
 
 func NewAuthTravelerService(rep *repository.Repository) *AuthTravelerService {
-	return &AuthTravelerService{repo: rep}
+	return &AuthTravelerService{
+		repo:     rep,
+		otpStore: make(map[string]otpData),
+		tokens: &InMemoryTokenStorage{
+			accessTokens:  make(map[string]string),
+			refreshTokens: make(map[string]string),
+		},
+	}
 }
 
 func (t *AuthTravelerService) CreateTraveler(traveler models.Traveler) (int, error) {
 	return 0, nil
 }
 
-func (t *AuthTravelerService) GetTraveler(phoneNumber string) (models.Traveler, error) {
-	return t.repo.AuthTraveler.GetTraveler(phoneNumber)
+func (t *AuthTravelerService) GetTraveler(email string) (models.Traveler, error) {
+	return t.repo.AuthTraveler.GetTraveler(email)
 }
 
 func (t *AuthTravelerService) GetAllTraveler() ([]models.Traveler, error) {
 	return t.repo.AuthTraveler.GetAllTraveler()
 }
 
-func (t *AuthTravelerService) GenerateToken(phoneNumber string) (string, error) {
-	traveler, err := t.GetTraveler(phoneNumber)
+func (t *AuthTravelerService) GenerateToken(email string) (string, error) {
+	traveler, err := t.GetTraveler(email)
 	if err != nil {
 		return "", err
 	}
@@ -69,4 +86,18 @@ func (s *AuthTravelerService) ParseToken(accessToken string) (string, error) {
 	}
 
 	return claims["sub"].(string), nil
+}
+
+func (t *AuthTravelerService) GenerateRefreshToken(email string) (string, error) {
+	traveler, err := t.GetTraveler(email)
+	if err != nil {
+		return "", err
+	}
+
+	// Создаем refresh токен с длительным сроком действия (например, 7 дней)
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		ExpiresAt: time.Now().Add(refreshTokenTTL).Unix(),
+		Subject:   string(traveler.ID),
+	})
+	return refreshToken.SignedString([]byte(signingKey))
 }

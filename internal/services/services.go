@@ -14,10 +14,18 @@ type Tour interface {
 
 type AuthTraveler interface {
 	CreateTraveler(traveler models.Traveler) (int, error)
-	GetTraveler(phoneNumber string) (models.Traveler, error)
-	GenerateToken(phoneNumber string) (string, error)
+	GetTraveler(email string) (models.Traveler, error)
+	GenerateToken(email string) (string, error)
 	ParseToken(accessToken string) (string, error)
 	GetAllTraveler() ([]models.Traveler, error)
+	GenerateRefreshToken(email string) (string, error)
+	GenerateAndSaveOTP(email string) (string, error)
+	ValidateOTP(email, inputCode string) (bool, error)
+	CleanExpiredOTPs()
+	SendEmail(to string, subject string, body string) error
+	GetTokens(phoneNumber string) (string, string, error)
+	StoreTokens(phoneNumber, accessToken, refreshToken string)
+	UpdateTokens(phoneNumber, accessToken, refreshToken string) error
 }
 
 type Services struct {

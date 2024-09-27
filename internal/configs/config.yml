@@ -2,3 +2,7 @@ port: '8080'
 
 db:
   url: 'postgresql://admin:jr7NlVbP0EL2jbPK8GSTEVHKdOojBQn3@dpg-cromq42j1k6c739ki1ug-a.frankfurt-postgres.render.com/postgre_akgz'
+
+auth:
+  accessToken: 15m
+  refreshToken: 7d
