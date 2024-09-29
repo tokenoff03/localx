@@ -4,6 +4,7 @@ import (
 	"errors"
 	"localx/internal/models"
 	"localx/internal/repository"
+	"strconv"
 	"sync"
 	"time"
 
@@ -68,8 +69,9 @@ func (t *AuthTravelerService) GenerateToken(id int) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(tokenTTL).Unix(),
-		Subject:   string(traveler.ID),
+		Subject:   strconv.Itoa(traveler.ID),
 	})
+
 	return token.SignedString([]byte(signingKey))
 }
 
