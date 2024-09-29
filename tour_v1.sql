@@ -107,7 +107,7 @@ CREATE TABLE "traveler"(
     "country" VARCHAR(255) NOT NULL,
     "description" VARCHAR(255) NULL,
     "interest" BIGINT NOT NULL,
-    "favorite_tours" BIGINT NOT NULL
+    "favorite_tours" BIGINT NULL
 );
 
 ALTER TABLE

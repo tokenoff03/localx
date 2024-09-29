@@ -26,7 +26,7 @@ func (s *AuthTravelerService) ValidateOTP(email, inputCode string) (bool, error)
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	// Получаем данные для указанного номера телефона
+	// Получаем данные для указанного почты
 	data, exists := s.otpStore[email]
 	if !exists {
 		return false, fmt.Errorf("OTP not found")

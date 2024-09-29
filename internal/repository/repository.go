@@ -14,9 +14,10 @@ type Tour interface {
 }
 
 type AuthTraveler interface {
-	CreateTraveler(traveler models.Traveler) (int, error)
-	GetTraveler(phoneNumber string) (models.Traveler, error)
+	CreateTraveler(traveler models.TravelerSignUp) (int, error)
+	GetTravelerByEmail(email string) (models.Traveler, error)
 	GetAllTraveler() ([]models.Traveler, error)
+	GetTravelerById(id int) (models.Traveler, error)
 }
 
 type Repository struct {

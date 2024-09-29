@@ -26,21 +26,21 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		verification := auth.Group("/verification")
 		{
+			//Перед отправ
 			verification.POST("/sendCode", h.SendVerificationCode)
 			traveler := verification.Group("/traveler")
 			{
 				traveler.POST("/sign-in", h.TravelerSignIn)
+				//ошибка при получении всех пользователей, но это ручка не здесь будет
 				traveler.GET("/", h.GetAllTraveler)
+				traveler.POST("/sign-up", h.TravelerSignUp)
 			}
 		}
 
-		// company := auth.Group("/company")
-		// {
-		// 	company.POST("sign-in")
-		// }
+		// TODO для компании регистрацию и логин
 	}
 
-	tour := router.Group("/tour")
+	tour := router.Group("/tour", h.userIdentity) //функция для идентификации пользователя
 	{
 		tour.POST("/", h.CreateTour)
 		tour.GET("/:tour_id", h.GetTourById)

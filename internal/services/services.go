@@ -13,12 +13,13 @@ type Tour interface {
 }
 
 type AuthTraveler interface {
-	CreateTraveler(traveler models.Traveler) (int, error)
-	GetTraveler(email string) (models.Traveler, error)
-	GenerateToken(email string) (string, error)
+	CreateTraveler(traveler models.TravelerSignUp) (int, error)
+	GetTravelerById(id int) (models.Traveler, error)
+	GetTravelerByEmail(email string) (models.Traveler, error)
+	GenerateToken(id int) (string, error)
 	ParseToken(accessToken string) (string, error)
 	GetAllTraveler() ([]models.Traveler, error)
-	GenerateRefreshToken(email string) (string, error)
+	GenerateRefreshToken(id int) (string, error)
 	GenerateAndSaveOTP(email string) (string, error)
 	ValidateOTP(email, inputCode string) (bool, error)
 	CleanExpiredOTPs()

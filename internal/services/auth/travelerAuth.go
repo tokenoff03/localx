@@ -44,20 +44,24 @@ func NewAuthTravelerService(rep *repository.Repository) *AuthTravelerService {
 	}
 }
 
-func (t *AuthTravelerService) CreateTraveler(traveler models.Traveler) (int, error) {
-	return 0, nil
+func (t *AuthTravelerService) CreateTraveler(traveler models.TravelerSignUp) (int, error) {
+	return t.repo.AuthTraveler.CreateTraveler(traveler)
 }
 
-func (t *AuthTravelerService) GetTraveler(email string) (models.Traveler, error) {
-	return t.repo.AuthTraveler.GetTraveler(email)
+func (t *AuthTravelerService) GetTravelerById(id int) (models.Traveler, error) {
+	return t.repo.AuthTraveler.GetTravelerById(id)
+}
+
+func (t *AuthTravelerService) GetTravelerByEmail(email string) (models.Traveler, error) {
+	return t.repo.AuthTraveler.GetTravelerByEmail(email)
 }
 
 func (t *AuthTravelerService) GetAllTraveler() ([]models.Traveler, error) {
 	return t.repo.AuthTraveler.GetAllTraveler()
 }
 
-func (t *AuthTravelerService) GenerateToken(email string) (string, error) {
-	traveler, err := t.GetTraveler(email)
+func (t *AuthTravelerService) GenerateToken(id int) (string, error) {
+	traveler, err := t.GetTravelerById(id)
 	if err != nil {
 		return "", err
 	}
@@ -88,8 +92,8 @@ func (s *AuthTravelerService) ParseToken(accessToken string) (string, error) {
 	return claims["sub"].(string), nil
 }
 
-func (t *AuthTravelerService) GenerateRefreshToken(email string) (string, error) {
-	traveler, err := t.GetTraveler(email)
+func (t *AuthTravelerService) GenerateRefreshToken(id int) (string, error) {
+	traveler, err := t.GetTravelerById(id)
 	if err != nil {
 		return "", err
 	}
