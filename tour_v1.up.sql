@@ -31,7 +31,7 @@ CREATE TABLE "tour_category"(
 );
 ALTER TABLE
     "tour_category" ADD PRIMARY KEY("id");
-CREATE TABLE "employee"(
+```CREATE TABLE "employee"(
     "id" BIGINT NOT NULL,
     "first_name" VARCHAR(255) NOT NULL,
     "last_name" VARCHAR(255) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE "employee"(
     "company_id" BIGINT NOT NULL
 );
 ALTER TABLE
-    "employee" ADD PRIMARY KEY("id");
+    "employee" ADD PRIMARY KEY("id");```
 CREATE TABLE "tour_group"(
     "id" BIGINT NOT NULL,
     "tour_id" BIGINT NOT NULL,
