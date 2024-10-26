@@ -17,7 +17,7 @@ func NewTourPostgres(db *sqlx.DB) *TourPostgres {
 	return &TourPostgres{db: db}
 }
 
-func (t *TourPostgres) CreateTour(ctx context.Context, tour models.Tour, companyId int) (int, error) {
+func (t *TourPostgres) CreateTour(ctx context.Context, tour models.Tour, companyId int64) (int64, error) {
 	query := `
 	INSERT INTO tour (id, company_id, title, start_time, end_time, group_size, languages, free_cancellation, cancellation_condition, description, meeting_place, 
 	arrival_place, what_is_included, what_to_prepare, prohibitions, price, images)
@@ -30,10 +30,10 @@ func (t *TourPostgres) CreateTour(ctx context.Context, tour models.Tour, company
 		return 0, err
 	}
 
-	return int(id), nil
+	return int64(id), nil
 }
 
-func (t *TourPostgres) GetTourById(ctx context.Context, id int) (models.Tour, error) {
+func (t *TourPostgres) GetTourById(ctx context.Context, id int64) (models.Tour, error) {
 	var tour models.Tour
 	query := `
 	SELECT id, company_id, title, start_time, end_time, group_size, languages, free_cancellation, cancellation_condition, description, meeting_place, 
@@ -67,91 +67,91 @@ func (t *TourPostgres) UpdateTour(ctx context.Context, tour models.Tour) error {
 	return err
 }
 
-func (t *TourPostgres) DeleteTour(ctx context.Context, id int) error {
+func (t *TourPostgres) DeleteTour(ctx context.Context, id int64) error {
 	query := "DELETE FROM tour WHERE id = $1"
 	_, err := t.db.ExecContext(ctx, query, id)
 	return err
 }
 
-func (t *TourPostgres) SetTitle(ctx context.Context, id int, title string) error {
+func (t *TourPostgres) SetTitle(ctx context.Context, id int64, title string) error {
 	query := "UPDATE tour SET title = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, title, id)
 	return err
 }
 
-func (t *TourPostgres) SetStartTime(ctx context.Context, id int, startTime time.Time) error {
+func (t *TourPostgres) SetStartTime(ctx context.Context, id int64, startTime time.Time) error {
 	query := "UPDATE tour SET start_time = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, startTime, id)
 	return err
 }
 
-func (t *TourPostgres) SetEndTime(ctx context.Context, id int, endTime time.Time) error {
+func (t *TourPostgres) SetEndTime(ctx context.Context, id int64, endTime time.Time) error {
 	query := "UPDATE tour SET end_time = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, endTime, id)
 	return err
 }
 
-func (t *TourPostgres) SetLanguages(ctx context.Context, id int, languages string) error {
+func (t *TourPostgres) SetLanguages(ctx context.Context, id int64, languages string) error {
 	query := "UPDATE tour SET languages = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, languages, id)
 	return err
 }
 
-func (t *TourPostgres) SetFreeCancellation(ctx context.Context, id int, freeCancellation bool) error {
+func (t *TourPostgres) SetFreeCancellation(ctx context.Context, id int64, freeCancellation bool) error {
 	query := "UPDATE tour SET free_cancellation = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, freeCancellation, id)
 	return err
 }
 
-func (t *TourPostgres) SetCancellationCondition(ctx context.Context, id int, cancellationCondition string) error {
+func (t *TourPostgres) SetCancellationCondition(ctx context.Context, id int64, cancellationCondition string) error {
 	query := "UPDATE tour SET cancellation_condition = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, cancellationCondition, id)
 	return err
 }
 
-func (t *TourPostgres) SetDescription(ctx context.Context, id int, description string) error {
+func (t *TourPostgres) SetDescription(ctx context.Context, id int64, description string) error {
 	query := "UPDATE tour SET description = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, description, id)
 	return err
 }
 
-func (t *TourPostgres) SetMeetingPlace(ctx context.Context, id int, meetingPlace string) error {
+func (t *TourPostgres) SetMeetingPlace(ctx context.Context, id int64, meetingPlace string) error {
 	query := "UPDATE tour SET meeting_place = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, meetingPlace, id)
 	return err
 }
 
-func (t *TourPostgres) SetArrivalPlace(ctx context.Context, id int, arrivalPlace string) error {
+func (t *TourPostgres) SetArrivalPlace(ctx context.Context, id int64, arrivalPlace string) error {
 	query := "UPDATE tour SET arrival_place = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, arrivalPlace, id)
 	return err
 }
 
-func (t *TourPostgres) SetWhatIsIncluded(ctx context.Context, id int, whatIsIncluded string) error {
+func (t *TourPostgres) SetWhatIsIncluded(ctx context.Context, id int64, whatIsIncluded string) error {
 	query := "UPDATE tour SET what_is_included = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, whatIsIncluded, id)
 	return err
 }
 
-func (t *TourPostgres) SetWhatToPrepare(ctx context.Context, id int, whatToPrepare string) error {
+func (t *TourPostgres) SetWhatToPrepare(ctx context.Context, id int64, whatToPrepare string) error {
 	query := "UPDATE tour SET what_to_prepare = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, whatToPrepare, id)
 	return err
 }
 
-func (t *TourPostgres) SetProhibitions(ctx context.Context, id int, prohibitions string) error {
+func (t *TourPostgres) SetProhibitions(ctx context.Context, id int64, prohibitions string) error {
 	query := "UPDATE tour SET prohibitions = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, prohibitions, id)
 	return err
 }
 
-func (t *TourPostgres) SetPrice(ctx context.Context, id int, price int) error {
+func (t *TourPostgres) SetPrice(ctx context.Context, id int64, price int64) error {
 	query := "UPDATE tour SET price = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, price, id)
 	return err
 }
 
-func (t *TourPostgres) SetImages(ctx context.Context, id int, images string) error {
+func (t *TourPostgres) SetImages(ctx context.Context, id int64, images string) error {
 	query := "UPDATE tour SET images = $1 WHERE id = $2"
 	_, err := t.db.ExecContext(ctx, query, images, id)
 	return err

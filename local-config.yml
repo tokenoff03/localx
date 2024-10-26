@@ -1,0 +1,9 @@
+http:
+  port: '8080'
+
+db:
+  url: 'postgres://postgres:kot12345@localhost:5432/localx?sslmode=disable'
+
+auth:
+  accessToken: 15m
+  refreshToken: 7d

@@ -40,7 +40,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		// TODO для компании регистрацию и логин
 	}
 
-	tour := router.Group("/tour")
+	// tour := router.Group("/tour")
+	tour := router.Group("/tour", h.userIdentity)
 	{
 		tour.POST("/", h.CreateTour)
 		tour.GET("/:id", h.GetTourById)

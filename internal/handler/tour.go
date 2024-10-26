@@ -23,7 +23,7 @@ func (h *Handler) CreateTour(c *gin.Context) {
 
 	ctx := c.Request.Context()
 
-	id, err := h.services.Tour.CreateTour(ctx, input, input.CompanyID)
+	id, err := h.services.Tour.CreateTour(ctx, input, int64(input.CompanyID))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -40,7 +40,7 @@ func (h *Handler) GetTourById(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	tour, err := h.services.Tour.GetTourById(ctx, id)
+	tour, err := h.services.Tour.GetTourById(ctx, int64(id))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -84,7 +84,7 @@ func (h *Handler) DeleteTour(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	err = h.services.Tour.DeleteTour(ctx, id)
+	err = h.services.Tour.DeleteTour(ctx, int64(id))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -102,7 +102,7 @@ func (h *Handler) UpdateTourField(c *gin.Context) {
 		return
 	}
 
-	fieldUpdaters := map[string]func(ctx *gin.Context, id int) error{
+	fieldUpdaters := map[string]func(ctx *gin.Context, id int64) error{
 		"title":                  h.updateTitle,
 		"start_time":             h.updateStartTime,
 		"end_time":               h.updateEndTime,
@@ -125,7 +125,7 @@ func (h *Handler) UpdateTourField(c *gin.Context) {
 		return
 	}
 
-	err = updater(c, id)
+	err = updater(c, int64(id))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -134,7 +134,7 @@ func (h *Handler) UpdateTourField(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": field + " updated"})
 }
 
-func (h *Handler) updateTitle(c *gin.Context, id int) error {
+func (h *Handler) updateTitle(c *gin.Context, id int64) error {
 	var input struct {
 		Title string `json:"title" binding:"required"`
 	}
@@ -146,7 +146,7 @@ func (h *Handler) updateTitle(c *gin.Context, id int) error {
 	return h.services.Tour.SetTitle(ctx, id, input.Title)
 }
 
-func (h *Handler) updateStartTime(c *gin.Context, id int) error {
+func (h *Handler) updateStartTime(c *gin.Context, id int64) error {
 	var input struct {
 		StartTime string `json:"start_time" binding:"required"`
 	}
@@ -163,7 +163,7 @@ func (h *Handler) updateStartTime(c *gin.Context, id int) error {
 	return h.services.Tour.SetStartTime(ctx, id, startTime)
 }
 
-func (h *Handler) updateEndTime(c *gin.Context, id int) error {
+func (h *Handler) updateEndTime(c *gin.Context, id int64) error {
 	var input struct {
 		EndTime string `json:"end_time" binding:"required"`
 	}
@@ -180,7 +180,7 @@ func (h *Handler) updateEndTime(c *gin.Context, id int) error {
 	return h.services.Tour.SetEndTime(ctx, id, endTime)
 }
 
-func (h *Handler) updateLanguages(c *gin.Context, id int) error {
+func (h *Handler) updateLanguages(c *gin.Context, id int64) error {
 	var input struct {
 		Languages string `json:"languages" binding:"required"`
 	}
@@ -192,7 +192,7 @@ func (h *Handler) updateLanguages(c *gin.Context, id int) error {
 	return h.services.Tour.SetLanguages(ctx, id, input.Languages)
 }
 
-func (h *Handler) updateFreeCancellation(c *gin.Context, id int) error {
+func (h *Handler) updateFreeCancellation(c *gin.Context, id int64) error {
 	var input struct {
 		FreeCancellation bool `json:"free_cancellation"`
 	}
@@ -204,7 +204,7 @@ func (h *Handler) updateFreeCancellation(c *gin.Context, id int) error {
 	return h.services.Tour.SetFreeCancellation(ctx, id, input.FreeCancellation)
 }
 
-func (h *Handler) updateCancellationCondition(c *gin.Context, id int) error {
+func (h *Handler) updateCancellationCondition(c *gin.Context, id int64) error {
 	var input struct {
 		CancellationCondition map[string]interface{} `json:"cancellation_condition" binding:"required"`
 	}
@@ -221,7 +221,7 @@ func (h *Handler) updateCancellationCondition(c *gin.Context, id int) error {
 	return h.services.Tour.SetCancellationCondition(ctx, id, string(cancellationConditionJSON))
 }
 
-func (h *Handler) updateDescription(c *gin.Context, id int) error {
+func (h *Handler) updateDescription(c *gin.Context, id int64) error {
 	var input struct {
 		Description string `json:"description" binding:"required"`
 	}
@@ -233,7 +233,7 @@ func (h *Handler) updateDescription(c *gin.Context, id int) error {
 	return h.services.Tour.SetDescription(ctx, id, input.Description)
 }
 
-func (h *Handler) updateMeetingPlace(c *gin.Context, id int) error {
+func (h *Handler) updateMeetingPlace(c *gin.Context, id int64) error {
 	var input struct {
 		MeetingPlace string `json:"meeting_place" binding:"required"`
 	}
@@ -245,7 +245,7 @@ func (h *Handler) updateMeetingPlace(c *gin.Context, id int) error {
 	return h.services.Tour.SetMeetingPlace(ctx, id, input.MeetingPlace)
 }
 
-func (h *Handler) updateArrivalPlace(c *gin.Context, id int) error {
+func (h *Handler) updateArrivalPlace(c *gin.Context, id int64) error {
 	var input struct {
 		ArrivalPlace string `json:"arrival_place" binding:"required"`
 	}
@@ -257,7 +257,7 @@ func (h *Handler) updateArrivalPlace(c *gin.Context, id int) error {
 	return h.services.Tour.SetArrivalPlace(ctx, id, input.ArrivalPlace)
 }
 
-func (h *Handler) updateWhatIsIncluded(c *gin.Context, id int) error {
+func (h *Handler) updateWhatIsIncluded(c *gin.Context, id int64) error {
 	var input struct {
 		WhatIsIncluded string `json:"what_is_included" binding:"required"`
 	}
@@ -269,7 +269,7 @@ func (h *Handler) updateWhatIsIncluded(c *gin.Context, id int) error {
 	return h.services.Tour.SetWhatIsIncluded(ctx, id, input.WhatIsIncluded)
 }
 
-func (h *Handler) updateWhatToPrepare(c *gin.Context, id int) error {
+func (h *Handler) updateWhatToPrepare(c *gin.Context, id int64) error {
 	var input struct {
 		WhatToPrepare string `json:"what_to_prepare" binding:"required"`
 	}
@@ -281,7 +281,7 @@ func (h *Handler) updateWhatToPrepare(c *gin.Context, id int) error {
 	return h.services.Tour.SetWhatToPrepare(ctx, id, input.WhatToPrepare)
 }
 
-func (h *Handler) updateProhibitions(c *gin.Context, id int) error {
+func (h *Handler) updateProhibitions(c *gin.Context, id int64) error {
 	var input struct {
 		Prohibitions string `json:"prohibitions" binding:"required"`
 	}
@@ -293,7 +293,7 @@ func (h *Handler) updateProhibitions(c *gin.Context, id int) error {
 	return h.services.Tour.SetProhibitions(ctx, id, input.Prohibitions)
 }
 
-func (h *Handler) updatePrice(c *gin.Context, id int) error {
+func (h *Handler) updatePrice(c *gin.Context, id int64) error {
 	var input struct {
 		Price int `json:"price" binding:"required"`
 	}
@@ -302,10 +302,10 @@ func (h *Handler) updatePrice(c *gin.Context, id int) error {
 	}
 
 	ctx := c.Request.Context()
-	return h.services.Tour.SetPrice(ctx, id, input.Price)
+	return h.services.Tour.SetPrice(ctx, id, int64(input.Price))
 }
 
-func (h *Handler) updateImages(c *gin.Context, id int) error {
+func (h *Handler) updateImages(c *gin.Context, id int64) error {
 	var input struct {
 		Images string `json:"images" binding:"required"`
 	}
