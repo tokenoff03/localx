@@ -1,24 +1,22 @@
 package handler
 
 import (
-	"localx/internal/services"
-
 	"github.com/gin-gonic/gin"
+	"localx/internal/services"
+	"net/http"
 )
 
 type Handler struct {
-	services     *services.Services
-	tokenStorage *InMemoryTokenStorage
+	services      *services.Services
+	avatarService *services.AvatarService
 }
 
-func NewHandler(s *services.Services) *Handler {
-	return &Handler{services: s}
+func NewHandler(s *services.Services, avatarService *services.AvatarService) *Handler {
+	return &Handler{services: s, avatarService: avatarService}
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
-
-	// base middlewares
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
@@ -26,26 +24,51 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		verification := auth.Group("/verification")
 		{
-			//Перед отправ
 			verification.POST("/sendCode", h.SendVerificationCode)
 			traveler := verification.Group("/traveler")
 			{
 				traveler.POST("/sign-in", h.TravelerSignIn)
-				//ошибка при получении всех пользователей, но это ручка не здесь будет
 				traveler.GET("/", h.GetAllTraveler)
 				traveler.POST("/sign-up", h.TravelerSignUp)
+				traveler.POST("/upload-avatar", h.UploadAvatar)
 			}
 		}
-
-		// TODO для компании регистрацию и логин
 	}
 
-	tour := router.Group("/tour", h.userIdentity) //функция для идентификации пользователя
+	tour := router.Group("/tour", h.userIdentity)
 	{
 		tour.POST("/", h.CreateTour)
 		tour.GET("/:tour_id", h.GetTourById)
+	}
+	return router
+}
 
+// UploadAvatar обрабатывает загрузку аватара пользователя
+func (h *Handler) UploadAvatar(c *gin.Context) {
+	// Пример получения ID пользователя (в реальности это можно получить из токена или базы данных)
+	userID := 1 // В будущем замените на актуальный способ получения ID пользователя
+
+	// Получаем файл из запроса
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "file is required"})
+		return
 	}
 
-	return router
+	src, err := file.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to open the file"})
+		return
+	}
+	defer src.Close()
+
+	// Загружаем аватар в Supabase
+	url, err := h.avatarService.UploadAvatar(userID, src, file)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Возвращаем URL загруженного аватара
+	c.JSON(http.StatusOK, gin.H{"url": url})
 }

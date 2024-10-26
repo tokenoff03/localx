@@ -1,8 +1,13 @@
+AWS:
+  S3:
+    Bucket: "avatars241024"
+    Region: "eu-north-1"
+
 http:
   port: '8080'
 
 db:
-  url: 'postgresql://admin:jr7NlVbP0EL2jbPK8GSTEVHKdOojBQn3@dpg-cromq42j1k6c739ki1ug-a.frankfurt-postgres.render.com/postgre_akgz'
+  url: 'postgres://postgres:28072004@localhost:5432/tour?sslmode=disable'
 
 auth:
   accessToken: 15m
