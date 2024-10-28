@@ -33,7 +33,15 @@ func main() {
 	// Настройки для Supabase
 
 	// Создание сервиса аватаров
-	avatarService := services.NewAvatarService("https://kytnrvcpxizrtharguee.supabase.co/storage/v1", "avatars", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dG5ydmNweGl6cnRoYXJndWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk5MjMzNTMsImV4cCI6MjA0NTQ5OTM1M30.5UGSLi6rjflcFVfPAuWNBjCDWirXAHxEfTClKJXAkHE")
+	travelerRepo := repository.NewTravelerRepository(db)
+
+	// Создание экземпляра AvatarService с новым параметром travelerRepo
+	avatarService := services.NewAvatarService(
+		travelerRepo,
+		"https://kytnrvcpxizrtharguee.supabase.co/storage/v1",
+		"avatars",
+		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dG5ydmNweGl6cnRoYXJndWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk5MjMzNTMsImV4cCI6MjA0NTQ5OTM1M30.5UGSLi6rjflcFVfPAuWNBjCDWirXAHxEfTClKJXAkHE",
+	)
 
 	// Создание репозиториев и сервисов
 	repos := repository.NewRepository(db)
