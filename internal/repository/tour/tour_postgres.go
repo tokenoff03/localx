@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"localx/internal/models"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -73,86 +72,32 @@ func (t *TourPostgres) DeleteTour(ctx context.Context, id int64) error {
 	return err
 }
 
-func (t *TourPostgres) SetTitle(ctx context.Context, id int64, title string) error {
-	query := "UPDATE tour SET title = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, title, id)
-	return err
-}
+func (t *TourPostgres) UpdateTourDetails(ctx context.Context, tour models.Tour) error {
+	query := `
+    UPDATE tour SET
+    title = COALESCE($1, title),
+    start_time = COALESCE($2, start_time),
+    end_time = COALESCE($3, end_time),
+    group_size = COALESCE($4, group_size),
+    languages = COALESCE($5, languages),
+    free_cancellation = COALESCE($6, free_cancellation),
+    cancellation_condition = COALESCE($7::json, cancellation_condition),
+    description = COALESCE($8, description),
+    meeting_place = COALESCE($9, meeting_place),
+    arrival_place = COALESCE($10, arrival_place),
+    what_is_included = COALESCE($11, what_is_included),
+    what_to_prepare = COALESCE($12, what_to_prepare),
+    prohibitions = COALESCE($13, prohibitions),
+    price = COALESCE($14, price),
+    images = COALESCE($15, images)
+    WHERE id = $16
+    `
 
-func (t *TourPostgres) SetStartTime(ctx context.Context, id int64, startTime time.Time) error {
-	query := "UPDATE tour SET start_time = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, startTime, id)
-	return err
-}
-
-func (t *TourPostgres) SetEndTime(ctx context.Context, id int64, endTime time.Time) error {
-	query := "UPDATE tour SET end_time = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, endTime, id)
-	return err
-}
-
-func (t *TourPostgres) SetLanguages(ctx context.Context, id int64, languages string) error {
-	query := "UPDATE tour SET languages = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, languages, id)
-	return err
-}
-
-func (t *TourPostgres) SetFreeCancellation(ctx context.Context, id int64, freeCancellation bool) error {
-	query := "UPDATE tour SET free_cancellation = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, freeCancellation, id)
-	return err
-}
-
-func (t *TourPostgres) SetCancellationCondition(ctx context.Context, id int64, cancellationCondition string) error {
-	query := "UPDATE tour SET cancellation_condition = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, cancellationCondition, id)
-	return err
-}
-
-func (t *TourPostgres) SetDescription(ctx context.Context, id int64, description string) error {
-	query := "UPDATE tour SET description = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, description, id)
-	return err
-}
-
-func (t *TourPostgres) SetMeetingPlace(ctx context.Context, id int64, meetingPlace string) error {
-	query := "UPDATE tour SET meeting_place = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, meetingPlace, id)
-	return err
-}
-
-func (t *TourPostgres) SetArrivalPlace(ctx context.Context, id int64, arrivalPlace string) error {
-	query := "UPDATE tour SET arrival_place = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, arrivalPlace, id)
-	return err
-}
-
-func (t *TourPostgres) SetWhatIsIncluded(ctx context.Context, id int64, whatIsIncluded string) error {
-	query := "UPDATE tour SET what_is_included = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, whatIsIncluded, id)
-	return err
-}
-
-func (t *TourPostgres) SetWhatToPrepare(ctx context.Context, id int64, whatToPrepare string) error {
-	query := "UPDATE tour SET what_to_prepare = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, whatToPrepare, id)
-	return err
-}
-
-func (t *TourPostgres) SetProhibitions(ctx context.Context, id int64, prohibitions string) error {
-	query := "UPDATE tour SET prohibitions = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, prohibitions, id)
-	return err
-}
-
-func (t *TourPostgres) SetPrice(ctx context.Context, id int64, price int64) error {
-	query := "UPDATE tour SET price = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, price, id)
-	return err
-}
-
-func (t *TourPostgres) SetImages(ctx context.Context, id int64, images string) error {
-	query := "UPDATE tour SET images = $1 WHERE id = $2"
-	_, err := t.db.ExecContext(ctx, query, images, id)
+	_, err := t.db.ExecContext(ctx, query,
+		tour.Title, tour.StartTime, tour.EndTime, tour.GroupSize, tour.Languages,
+		tour.FreeCancellation, tour.CancellationCondition, tour.Description,
+		tour.MeetingPlace, tour.ArrivalPlace, tour.WhatIsIncluded, tour.WhatToPrepare,
+		tour.Prohibitions, tour.Price, tour.Images, tour.ID,
+	)
 	return err
 }
