@@ -18,6 +18,8 @@ import (
 
 func main() {
 	cfg, err := config.InitConfig("../config.yml")
+	// cfg, err := config.InitConfig("./local-config.yml")
+
 	if err != nil {
 		panic(err)
 	}

@@ -3,10 +3,10 @@ module localx
 go 1.22.4
 
 require (
-	github.com/BurntSushi/toml v1.2.1 // indirect
 	cloud.google.com/go/auth v0.9.5 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.4 // indirect
 	cloud.google.com/go/compute/metadata v0.5.2 // indirect
+	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/MakMoinee/go-mith v1.2.10 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
@@ -29,6 +29,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.4 // indirect
 	github.com/googleapis/gax-go/v2 v2.13.0 // indirect
+	github.com/guregu/null v4.0.0+incompatible
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/ilyakaznacheev/cleanenv v1.5.0 // indirect
 	github.com/jmoiron/sqlx v1.4.0 // indirect

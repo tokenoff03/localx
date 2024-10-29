@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"encoding/json"
+	"localx/internal/gopartial"
 	"localx/internal/models"
-	"localx/internal/utils"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -97,9 +99,14 @@ func (h *Handler) UpdateTourDetails(c *gin.Context) {
 		return
 	}
 
-	var input models.Tour
+	var input map[string]interface{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid input")
+		return
+	}
+
+	if len(input) == 0 {
+		newErrorResponse(c, http.StatusBadRequest, "No data provided for update")
 		return
 	}
 
@@ -109,11 +116,37 @@ func (h *Handler) UpdateTourDetails(c *gin.Context) {
 		return
 	}
 
-	updatedTour := utils.ApplyTourUpdatesDetails(input, existingTour)
-	updatedTour.ID = int(id)
+	if existingTour.ID == 0 {
+		newErrorResponse(c, http.StatusNotFound, "Tour not found")
+		return
+	}
+
+	if condition, ok := input["cancellation_condition"]; ok {
+		conditionBytes, err := json.Marshal(condition)
+		if err != nil {
+			newErrorResponse(c, http.StatusBadRequest, "Invalid cancellation_condition format")
+			return
+		}
+		input["cancellation_condition"] = json.RawMessage(conditionBytes)
+	}
+
+	_, err = gopartial.PartialUpdate(
+		&existingTour,
+		input,
+		"json",
+		gopartial.SkipConditions,
+		gopartial.Updaters,
+	)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	log.Printf("Updated Tour: %+v", existingTour)
+	log.Printf("CancellationCondition: %s", string(existingTour.CancellationCondition))
 
 	ctx := c.Request.Context()
-	if err := h.services.Tour.UpdateTour(ctx, updatedTour); err != nil {
+	if err := h.services.Tour.UpdateTour(ctx, existingTour); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
