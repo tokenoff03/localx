@@ -47,9 +47,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		tour.GET("/:id", h.GetTourById)
 		tour.PUT("/:id", h.UpdateTour)
 		tour.DELETE("/:id", h.DeleteTour)
-
-		tour.PATCH("/:id", h.UpdateTourDetails)
-
+		tour.PATCH("/:id", h.PartialUpdateTour)
 	}
 
 	return router

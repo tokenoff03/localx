@@ -13,7 +13,7 @@ type Tour interface {
 	GetTourById(ctx context.Context, id int64) (models.Tour, error)
 	UpdateTour(ctx context.Context, tour models.Tour) error
 	DeleteTour(ctx context.Context, id int64) error
-	UpdateTourDetails(ctx context.Context, tour models.Tour) error
+	PartialUpdateTour(ctx context.Context, tour models.Tour) error
 }
 
 type AuthTraveler interface {

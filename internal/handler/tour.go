@@ -91,7 +91,7 @@ func (h *Handler) DeleteTour(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "tour deleted"})
 }
 
-func (h *Handler) UpdateTourDetails(c *gin.Context) {
+func (h *Handler) PartialUpdateTour(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {

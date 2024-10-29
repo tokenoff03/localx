@@ -72,7 +72,7 @@ func (t *TourPostgres) DeleteTour(ctx context.Context, id int64) error {
 	return err
 }
 
-func (t *TourPostgres) UpdateTourDetails(ctx context.Context, tour models.Tour) error {
+func (t *TourPostgres) PartialUpdateTour(ctx context.Context, tour models.Tour) error {
 	query := `
     UPDATE tour SET
     title = COALESCE($1, title),
