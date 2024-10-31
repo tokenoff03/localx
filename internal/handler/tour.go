@@ -1,22 +1,15 @@
 package handler
 
 import (
+	"encoding/json"
+	"localx/internal/gopartial"
 	"localx/internal/models"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-func (h *Handler) GetTourById(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("tour_id"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "id param is not correct")
-		return
-	}
-
-	c.JSON(http.StatusOK, id)
-}
 
 func (h *Handler) CreateTour(c *gin.Context) {
 	var input models.Tour
@@ -26,5 +19,137 @@ func (h *Handler) CreateTour(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, input)
+	ctx := c.Request.Context()
+
+	id, err := h.services.Tour.CreateTour(ctx, input, int64(input.CompanyID))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"id": id, "status": "tour created"})
+}
+
+func (h *Handler) GetTourById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "id param is not correct")
+		return
+	}
+
+	ctx := c.Request.Context()
+	tour, err := h.services.Tour.GetTourById(ctx, int64(id))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, tour)
+}
+
+func (h *Handler) UpdateTour(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid tour ID")
+		return
+	}
+
+	var input models.Tour
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	input.ID = id
+
+	ctx := c.Request.Context()
+	err = h.services.Tour.UpdateTour(ctx, input)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "tour updated"})
+}
+
+func (h *Handler) DeleteTour(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid tour ID")
+		return
+	}
+
+	ctx := c.Request.Context()
+	err = h.services.Tour.DeleteTour(ctx, int64(id))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "tour deleted"})
+}
+
+func (h *Handler) PartialUpdateTour(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid tour ID")
+		return
+	}
+
+	var input map[string]interface{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid input")
+		return
+	}
+
+	if len(input) == 0 {
+		newErrorResponse(c, http.StatusBadRequest, "No data provided for update")
+		return
+	}
+
+	existingTour, err := h.services.Tour.GetTourById(c.Request.Context(), int64(id))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if existingTour.ID == 0 {
+		newErrorResponse(c, http.StatusNotFound, "Tour not found")
+		return
+	}
+
+	if condition, ok := input["cancellation_condition"]; ok {
+		conditionBytes, err := json.Marshal(condition)
+		if err != nil {
+			newErrorResponse(c, http.StatusBadRequest, "Invalid cancellation_condition format")
+			return
+		}
+		input["cancellation_condition"] = json.RawMessage(conditionBytes)
+	}
+
+	_, err = gopartial.PartialUpdate(
+		&existingTour,
+		input,
+		"json",
+		gopartial.SkipConditions,
+		gopartial.Updaters,
+	)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	log.Printf("Updated Tour: %+v", existingTour)
+	log.Printf("CancellationCondition: %s", string(existingTour.CancellationCondition))
+
+	ctx := c.Request.Context()
+	if err := h.services.Tour.UpdateTour(ctx, existingTour); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "Tour details updated"})
 }

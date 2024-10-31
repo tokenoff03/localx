@@ -53,7 +53,7 @@ func (u UserRepository) UpdateUser(ctx context.Context, user models.User) error 
 		WHERE id = $9`
 	_, err := u.db.ExecContext(ctx, query, user.Name, user.ProfilePicture, user.Description, user.Email, user.Phone, user.City, user.Instagram, user.Interests, user.ID)
 	return err
-}
+}	
 
 func (u UserRepository) DeleteUser(ctx context.Context, id int64) error {
 	query := "DELETE FROM users WHERE id = $1"

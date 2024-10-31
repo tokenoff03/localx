@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"localx/internal/models"
 	"localx/internal/repository/auth"
 	"localx/internal/repository/tour"
@@ -9,8 +10,11 @@ import (
 )
 
 type Tour interface {
-	CreateTour(tour models.Tour, companyId int) (int, error)
-	GetById(id int) (models.Tour, error)
+	CreateTour(ctx context.Context, tour models.Tour, companyId int64) (int64, error)
+	GetTourById(ctx context.Context, id int64) (models.Tour, error)
+	UpdateTour(ctx context.Context, tour models.Tour) error
+	DeleteTour(ctx context.Context, id int64) error
+	PartialUpdateTour(ctx context.Context, tour models.Tour) error
 }
 
 type AuthTraveler interface {

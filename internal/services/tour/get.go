@@ -1,8 +1,10 @@
 package tour
 
-import "localx/internal/models"
+import (
+	"context"
+	"localx/internal/models"
+)
 
-func (t *TourService) GetById(id int) (models.Tour, error) {
-
-	return models.Tour{}, nil
+func (t *TourService) GetTourById(ctx context.Context, id int64) (models.Tour, error) {
+	return t.repo.GetTourById(ctx, id)
 }

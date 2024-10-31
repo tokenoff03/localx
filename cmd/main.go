@@ -6,6 +6,7 @@ import (
 	"localx/internal/config"
 	"localx/internal/handler"
 	"localx/internal/repository"
+	"localx/internal/repository/seeds"
 	"localx/internal/services"
 	"os"
 	"os/signal"
@@ -17,6 +18,8 @@ import (
 
 func main() {
 	cfg, err := config.InitConfig("../config.yml")
+	// cfg, err := config.InitConfig("./local-config.yml")
+
 	if err != nil {
 		panic(err)
 	}
@@ -27,6 +30,11 @@ func main() {
 	db, err := repository.NewPostgresDB(cfg.DB.URI)
 	if err != nil {
 		logrus.Fatalf("failed to initialize db: %s", err.Error())
+	}
+
+	seeder := seeds.AddSeedsPostgres(db)
+	if err := seeder.SeedAll(); err != nil {
+		logrus.Fatalf("Error seeding data: %s", err.Error())
 	}
 
 	repos := repository.NewRepository(db)
