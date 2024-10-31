@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"localx/internal/models"
 
@@ -16,6 +17,37 @@ type TravelerInput struct {
 type VerifyCodeInput struct {
 	Email string `json:"email" binding:"required"`
 	Code  string `json:"code" binding:"required"`
+}
+
+type RefreshTokenInput struct {
+	RefreshToken string `json:"refreshToken" binding:"required"`
+}
+
+func (h *Handler) RefreshToken(c *gin.Context) {
+	var input RefreshTokenInput
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input, need refresh-token")
+		return
+	}
+
+	idStr, err := h.services.ParseToken(input.RefreshToken)
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	accessToken, refreshToken, err := h.services.UpdateTokens(id, input.RefreshToken)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"accessToken":  accessToken,
+		"refreshToken": refreshToken,
+	})
+
 }
 
 func (h *Handler) SendVerificationCode(c *gin.Context) {

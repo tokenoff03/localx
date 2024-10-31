@@ -24,9 +24,9 @@ type AuthTraveler interface {
 	ValidateOTP(email, inputCode string) (bool, error)
 	CleanExpiredOTPs()
 	SendEmail(to string, subject string, body string) error
-	GetTokens(phoneNumber string) (string, string, error)
-	StoreTokens(phoneNumber, accessToken, refreshToken string)
-	UpdateTokens(phoneNumber, accessToken, refreshToken string) error
+	GetTokens(email string) (string, string, error)
+	StoreTokens(email, accessToken, refreshToken string)
+	UpdateTokens(id int, refreshToken string) (string, string, error)
 }
 
 type Services struct {

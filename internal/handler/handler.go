@@ -7,8 +7,7 @@ import (
 )
 
 type Handler struct {
-	services     *services.Services
-	tokenStorage *InMemoryTokenStorage
+	services *services.Services
 }
 
 func NewHandler(s *services.Services) *Handler {
@@ -24,6 +23,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	auth := router.Group("/auth")
 	{
+		auth.POST("/refresh-token", h.RefreshToken)
 		verification := auth.Group("/verification")
 		{
 			//Перед отправ
