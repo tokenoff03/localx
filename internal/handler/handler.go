@@ -52,7 +52,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	return router
 }
 
-// UploadAvatar godoc
 // @Summary Upload user avatar
 // @Description Upload a new avatar for a user by userID.
 // @Tags Avatar
@@ -63,7 +62,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 // @Success 200 {object} map[string]string "url"
 // @Failure 400 {object} map[string]string "error"
 // @Failure 500 {object} map[string]string "error"
-// @Router /auth/verification/traveler/{userID}/avatar [post
+// @Router /auth/verification/traveler/{userID}/avatar [post]
 func (h *Handler) UploadAvatar(c *gin.Context) {
 	userIDParam := c.Param("userID")
 	userID, err := strconv.Atoi(userIDParam)
