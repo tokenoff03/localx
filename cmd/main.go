@@ -5,6 +5,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"localx"
+	_ "localx/cmd/docs"
 	"localx/internal/config"
 	"localx/internal/handler"
 	"localx/internal/repository"
@@ -30,17 +31,15 @@ func main() {
 	}
 	defer db.Close()
 
-	// Настройки для Supabase
-
 	// Создание сервиса аватаров
 	travelerRepo := repository.NewTravelerRepository(db)
 
-	// Создание экземпляра AvatarService с новым параметром travelerRepo
+	// Передача параметров из конфигурации в AvatarService
 	avatarService := services.NewAvatarService(
 		travelerRepo,
-		"https://kytnrvcpxizrtharguee.supabase.co/storage/v1",
-		"avatars",
-		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dG5ydmNweGl6cnRoYXJndWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk5MjMzNTMsImV4cCI6MjA0NTQ5OTM1M30.5UGSLi6rjflcFVfPAuWNBjCDWirXAHxEfTClKJXAkHE",
+		cfg.Supabase.StorageURL,
+		cfg.Supabase.Bucket,
+		cfg.Supabase.AuthToken,
 	)
 
 	// Создание репозиториев и сервисов

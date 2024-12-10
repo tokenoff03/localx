@@ -1,7 +1,7 @@
-AWS:
-  S3:
-    Bucket: "avatars241024"
-    Region: "eu-north-1"
+aws:
+  s3:
+    bucket: "avatars241024"
+    region: "eu-north-1"
 
 http:
   port: '8080'
@@ -12,3 +12,8 @@ db:
 auth:
   accessToken: 15m
   refreshToken: 7d
+
+supabase:
+  storageURL: "https://kytnrvcpxizrtharguee.supabase.co/storage/v1"
+  bucket: "avatars"
+  authToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dG5ydmNweGl6cnRoYXJndWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk5MjMzNTMsImV4cCI6MjA0NTQ5OTM1M30.5UGSLi6rjflcFVfPAuWNBjCDWirXAHxEfTClKJXAkHE"
